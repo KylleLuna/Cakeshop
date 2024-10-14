@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Customize Your Cake!</title>
+        <link rel="stylesheet" href="design.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Ruge+Boogie&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-image: url(istockphoto-1208625205-612x612.jpg);
+                background-size: cover;
+                font-family: Arial, sans-serif;
+            }
+
+            .container {
+                max-width: 600px;
+                margin: 5% auto;
+                background: rgba(255, 255, 255, 0.9);
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            h1, h3 {
+                text-align: center;
+            }
+
+            h1 {
+                color: rgb(161, 227, 107);
+                letter-spacing: 5px;
+                text-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+                font-family: 'Ruge Boogie', cursive;
+                margin-bottom: 10px;
+            }
+
+            h3 {
+                color: red;
+                font-weight: normal;
+            }
+
+            label {
+                font-weight: bold;
+                display: block;
+                margin: 8px 0 5px;
+            }
+
+            input[type="text"], input[type="email"], textarea {
+                width: 100%;
+                padding: 8px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+            input[type="radio"] {
+                margin-left: 10px;
+            }
+
+            button {
+                padding: 10px 20px;
+                background-color: rgb(161, 227, 107);
+                border: none;
+                border-radius: 5px;
+                color: white;
+                cursor: pointer;
+                margin-right: 10px;
+                font-weight: bold;
+            }
+
+            button:hover {
+                background-color: rgb(130, 185, 86);
+            }
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+            }
+
+            li {
+                background-color: #f9f9f9;
+                padding: 10px;
+                margin: 8px 0;
+                border-radius: 5px;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>TASTY TREATS</h1>
+            <h3>OPENING HOURS: 5:00 AM - 7:00 PM (Monday - Friday)</h3>
+            
+            <form id="orderForm">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+    
+                <label for="flavor">Pick a Cake Flavor:</label>
+                <input type="radio" id="chocolate" name="flavor" value="chocolate" data-price="5" required> Chocolate ($5)
+                <input type="radio" id="vanilla" name="flavor" value="vanilla" data-price="4" required> Vanilla ($4)
+                <input type="radio" id="cheese" name="flavor" value="cheese" data-price="6" required> Cheese ($6)
+    
+                <label for="size">Pick a Size:</label>
+                <input type="radio" id="small" name="size" value="small" data-price="10" required> Small ($10)
+                <input type="radio" id="medium" name="size" value="medium" data-price="15" required> Medium ($15)
+                <input type="radio" id="large" name="size" value="large" data-price="20" required> Large ($20)
+    
+                <label for="design">Pick a Design:</label>
+                <input type="radio" id="flowers" name="design" value="flowers" data-price="3" required> Flowers ($3)
+                <input type="radio" id="stripes" name="design" value="stripes" data-price="4" required> Stripes ($4)
+                <input type="radio" id="polka" name="design" value="polka" data-price="5" required> Polka ($5)
+    
+                <label for="extra">Extra Info (optional):</label>
+                <textarea id="extra" name="extra" rows="4" placeholder="Insert additional info here"></textarea>
+    
+                <label for="contact">Add your email:</label>
+                <input type="email" id="contact" name="contact" placeholder="example@example.com" required>
+    
+                <button type="button" onclick="addOrder()">Add Order</button>
+                <button type="button" onclick="submitOrders()">Submit All Orders</button>
+                <button type="button" onclick="cancelOrder()">Cancel</button>
+            </form>
+    
+            <h2>Current Orders:</h2>
+            <ul id="orderList"></ul>
+        </div>
+    
+        <script>
+            let orders = [];
+        
+            function addOrder() {
+                const name = document.getElementById('name').value;
+                const flavor = document.querySelector('input[name="flavor"]:checked');
+                const size = document.querySelector('input[name="size"]:checked');
+                const design = document.querySelector('input[name="design"]:checked');
+                const extra = document.getElementById('extra').value;
+                const contact = document.getElementById('contact').value;
+        
+                if (name && flavor && size && design && contact) {
+                    const totalPrice = 
+                        parseFloat(flavor.dataset.price) + 
+                        parseFloat(size.dataset.price) + 
+                        parseFloat(design.dataset.price);
+        
+                    const order = {
+                        name: name,
+                        flavor: flavor.value,
+                        size: size.value,
+                        design: design.value,
+                        extra: extra || 'None',
+                        contact: contact,
+                        total: totalPrice.toFixed(2)
+                    };
+        
+                    orders.push(order);
+                    displayOrders();
+                    resetForm();
+                    alert('Order added successfully!');
+                } else {
+                    alert('Please fill out all required fields.');
+                }
+            }
+        
+            function displayOrders() {
+                const orderList = document.getElementById('orderList');
+                orderList.innerHTML = '';
+        
+                orders.forEach((order, index) => {
+                    orderList.innerHTML += `
+                        <li>
+                            <strong>Order ${index + 1}:</strong> ${order.size} ${order.flavor} cake with ${order.design} design. 
+                            <br>Extra Info: ${order.extra}. 
+                            <br>Email: ${order.contact}.
+                            <br><strong>Total Price:</strong> $${order.total}
+                        </li>`;
+                });
+            }
+        
+            function resetForm() {
+                document.getElementById('orderForm').reset();
+            }
+        
+            function submitOrders() {
+                if (orders.length > 0) {
+                    alert('All orders submitted successfully!');
+                    orders = [];
+                    displayOrders();
+                } else {
+                    alert('No orders to submit.');
+                }
+            }
+        
+            function cancelOrder() {
+                if (confirm('Are you sure you want to cancel all orders?')) {
+                    orders = [];
+                    displayOrders();
+                    resetForm();
+                    alert('All orders have been canceled.');
+                }
+            }
+        </script>
+    </body>
+</html>
